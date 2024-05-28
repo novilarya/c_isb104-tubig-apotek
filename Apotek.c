@@ -4,6 +4,7 @@
 
 char username[50];
 char password[50];
+char kodeAdmin[50];
 
 typedef struct {
 	char kodeAdmin[50];
@@ -57,11 +58,13 @@ typedef struct {
 Admin tambah;
 Obat tambahObat;
 Obat editObat;
+Supplier tambahSupplier;
+Supplier editSupplier;
 
 void header();
 
 void login();
-void signin();
+void signup();
 
 void menuUtama();
 
@@ -109,7 +112,7 @@ void laporanPembelian();
 int main() {
 	int menu;
 
-	system("COLOR C");
+	system("COLOR A");
 	header();
 	
 	menu:
@@ -123,7 +126,7 @@ int main() {
 		login();
 		break;
 	case 2:
-		signin();
+		signup();
 		break;
 	default:
 		printf("\tAnda Salah Memilih Menu!\n");
@@ -152,7 +155,7 @@ void login() {
 	printf("=================================================================================================\n");
 	
 	loginUsername:
-	printf("\tNama\t\t: ");
+	printf("\tUsername\t\t: ");
 	scanf("%s", username);
 	loginPassword:
 	printf("\tPassword\t: ");
@@ -167,7 +170,7 @@ void login() {
 	}
 
 	dataAdmin = fopen("data admin.txt", "a+");
-	while (fscanf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF) {
+	while (fscanf(dataAdmin, "%s\n%[^\n]\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF) {
 		user = 0;
 		pass = 0;
 		if (strcmp(username, tambah.username) == 0){
@@ -179,7 +182,8 @@ void login() {
 			} else {
 				pass = 0;
 				strcat(temp, tambah.password);
-				break;
+				printf("Password Anda Salah!\n");
+				goto loginPassword;
 			}
 		} else {
 			if (strcmp(password, tambah.password) == 0){
@@ -193,7 +197,6 @@ void login() {
 				break;
 			} else {
 				pass = 0;
-				break;
 			}
 			
 		}
@@ -209,7 +212,7 @@ void login() {
 	fclose(dataAdmin);
 }
 
-void signin() {
+void signup() {
 	system("CLS");
 	header();
 	
@@ -218,15 +221,32 @@ void signin() {
 
 	printf("Silahkan Registrasi Terlebih Dahulu!\n");
 	printf("=================================================================================================\n");
+	signUpKodeAdmin:
 	printf("\tKode Admin\t: ");
-	scanf("%s", tambah.kodeAdmin);
+	scanf("%s", kodeAdmin);
+	while (fscanf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF){
+		if(strcmp(kodeAdmin, tambah.kodeAdmin) == 0){
+			printf("Kode Admin Sudah Terdaftar!\n");
+			goto signUpKodeAdmin;
+		}
+	}
+
+	getchar();
 	printf("\tNama\t\t: ");
-	scanf("%s", tambah.nama);
+	scanf("%[^\n]", tambah.nama);
+
+	signUpUsername:
 	printf("\tUsername\t: ");
-	scanf("%s", tambah.username);
+	scanf("%s", username);
+	while (fscanf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF){
+		if(strcmp(username, tambah.username) == 0){
+			printf("Username Sudah Terdaftar!\n");
+			goto signUpUsername;
+		}
+	}
 	printf("\tPassword\t: ");
 	scanf("%s", tambah.password);
-	fprintf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password);
+	fprintf(dataAdmin, "%s\n%s\n%s\n%s\n", kodeAdmin, tambah.nama, username, tambah.password);
 
 	fclose(dataAdmin);
 
@@ -351,6 +371,9 @@ void menambahkanDataObat() {
 	printf("=================================================================================================\n");
 	printf("\tID Obat\t\t\t: ");
 	scanf("%s", tambahObat.idObat);
+
+
+
 	printf("\tNama Obat\t\t: ");
 	scanf("%s", tambahObat.namaObat);
 	printf("\tNomor Rak\t\t: ");
@@ -527,24 +550,125 @@ void kelolaDataSupplier() {
 }
 
 void menambahkanDataSupplier() {
+	FILE* dataSupplier;
+	dataSupplier = fopen("data supplier.txt", "a+");
+
 	printf("%s\t\t Menambahkan Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	
+	printf("\tID Supplier\t\t: ");
+	scanf("%s", tambahSupplier.idSupplier);
+	printf("\tNama Supplier\t\t: ");
+	scanf("%s", tambahSupplier.namaSupplier);
+	printf("\tNomor HP Supplier\t\t: ");
+	scanf("%d", &tambahSupplier.nomorHpSupplier);
+	printf("\tKota Supplier\t\t: ");
+	scanf("%s", tambahSupplier.kotaSupplier);
+
+	fprintf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+
+	fclose(dataSupplier);
 
 }
 void menampilkanDataSupplier() {
+	FILE* dataSupplier;
+	dataSupplier = fopen("data supplier.txt", "a+");
+
 	printf("%s\t\t Menampilkan Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("ID Supplier\t| Nama Supplier\t| Nomor HP Supplier | Kota Supplier\n");
+	printf("-------------------------------------------------------------------------------------------------\n");
 
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		printf("%s\t| %s\t| %d\t  | %s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+	}
+	
+	fclose(dataSupplier);
 }
 void mengeditDataSupplier() {
+	FILE* dataSupplier, * dataSupplierBaru;
+	char idSupplier[50];
+	int found = 0;
+
+	dataSupplier = fopen("data supplier.txt", "r");
+	dataSupplierBaru = fopen("data supplier temp.txt", "w");
+
 	printf("%s\t\t Mengedit Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("\tMasukkan ID Supplier yang Akan Diedit\t: ");
+	scanf("%s", idSupplier);
 
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		if (strcmp(tambahSupplier.idSupplier, idSupplier) == 0) {
+			found = 1;
+			printf("\tID Supplier\t\t\t: %s\n", tambahSupplier.idSupplier);
+			printf("\tNama Supplier\t\t: %s\n", tambahSupplier.namaSupplier);
+			printf("\tNomor HP Supplier\t\t: %d\n", tambahSupplier.nomorHpSupplier);
+			printf("\tKota Supplier\t\t: %s\n", tambahSupplier.kotaSupplier);
+
+			printf("\tMasukkan Data Baru:\n");
+			printf("\tNama Supplier\t\t: ");
+			scanf("%s", editSupplier.namaSupplier);
+			printf("\tNomor HP Supplier\t\t: ");
+			scanf("%d", &editSupplier.nomorHpSupplier);
+			printf("\tKota Supplier\t\t: ");
+			scanf("%s", editSupplier.kotaSupplier);
+
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, editSupplier.namaSupplier, editSupplier.nomorHpSupplier, editSupplier.kotaSupplier);
+		}
+		else {
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+		}
+	}
+
+	fclose(dataSupplier);
+	fclose(dataSupplierBaru);
+
+	if (found) {
+		remove("data supplier.txt");
+		rename("data supplier temp.txt", "data supplier.txt");
+		printf("\tData Supplier Berhasil Diedit!\n");
+	}
+	else {
+		remove("data supplier temp.txt");
+		printf("\tData Supplier Tidak Ditemukan!\n");
+	}
 }
 void menghapusDataSupplier() {
 	printf("%s\t\t Menghapus Data Supplier\n", username);
 	printf("=================================================================================================\n");
 
+    FILE* dataSupplier, * dataSupplierBaru;
+	char idSupplier[50];
+	int found = 0;
+
+	dataSupplier = fopen("data supplier.txt", "r");
+	dataSupplierBaru = fopen("data supplier temp.txt", "w");
+
+	printf("\tMasukkan ID Supplier yang Akan Dihapus\t: ");
+	scanf("%s", idSupplier);
+	
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		if (strcmp(tambahSupplier.idSupplier, idSupplier) == 0) {
+			found = 1;
+			printf("\tData Supplier dengan ID %s Berhasil Dihapus!\n", tambahSupplier.idSupplier);
+		}
+		else {
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+		}
+	}
+
+	fclose(dataSupplier);
+	fclose(dataSupplierBaru);
+
+	if (found) {
+		remove("data supplier.txt");
+		rename("data supplier temp.txt", "data supplier.txt");
+	}
+	else {
+		remove("data supplier temp.txt");
+		printf("\tData Supplier Tidak Ditemukan!\n");
+	}
 }
 
 void kelolaDataCustomer() {
