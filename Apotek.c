@@ -114,7 +114,7 @@ int main() {
 
 	system("COLOR A");
 	header();
-	
+
 	menu:
 	printf("\tHarap Login Terlebih Dahulu!\n");
 	printf("\t1. Sudah Punya Akun\n");
@@ -215,7 +215,7 @@ void login() {
 void signup() {
 	system("CLS");
 	header();
-	
+
 	FILE* dataAdmin;
 	dataAdmin = fopen("data admin.txt", "a+");
 
@@ -299,12 +299,12 @@ void menuUtama() {
 void manajemenData() {
 	system("CLS");
 	header();
-	
+
 	int menuManajemen;
 
 	printf("%s\t\t Manajemen Data\n", username);
 	printf("=================================================================================================\n");
-	
+
 	menuManajemen:
 	printf("\t1. Kelola Data Obat\n");
 	printf("\t2. Kelola Data Supplier\n");
@@ -383,7 +383,7 @@ void menambahkanDataObat() {
 	printf("\tHarga\t\t: ");
 	scanf("%d", &tambahObat.harga);
 	printf("\tTanggal Produksi (DDMMYYYY)\t: ");
-	
+
 	scanf("%d", &tambahObat.tanggalProduksi);
 	printf("\tTanggal Kadaluarsa (DDMMYYYY)\t: ");
 	scanf("%d", &tambahObat.tanggalKadaluarsa);
@@ -550,7 +550,8 @@ void kelolaDataSupplier() {
 }
 
 void menambahkanDataSupplier() {
-	FILE* dataSupplier;
+
+    FILE* dataSupplier;
 	dataSupplier = fopen("data supplier.txt", "a+");
 
 	printf("%s\t\t Menambahkan Data Supplier\n", username);
@@ -568,8 +569,8 @@ void menambahkanDataSupplier() {
 	fprintf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
 
 	fclose(dataSupplier);
-
 }
+
 void menampilkanDataSupplier() {
 	FILE* dataSupplier;
 	dataSupplier = fopen("data supplier.txt", "a+");
@@ -585,6 +586,7 @@ void menampilkanDataSupplier() {
 	
 	fclose(dataSupplier);
 }
+
 void mengeditDataSupplier() {
 	FILE* dataSupplier, * dataSupplierBaru;
 	char idSupplier[50];
@@ -634,16 +636,17 @@ void mengeditDataSupplier() {
 		printf("\tData Supplier Tidak Ditemukan!\n");
 	}
 }
-void menghapusDataSupplier() {
-	printf("%s\t\t Menghapus Data Supplier\n", username);
-	printf("=================================================================================================\n");
 
+void menghapusDataSupplier() {
     FILE* dataSupplier, * dataSupplierBaru;
 	char idSupplier[50];
 	int found = 0;
 
 	dataSupplier = fopen("data supplier.txt", "r");
 	dataSupplierBaru = fopen("data supplier temp.txt", "w");
+
+	printf("%s\t\t Menghapus Data Supplier\n", username);
+	printf("=================================================================================================\n");
 
 	printf("\tMasukkan ID Supplier yang Akan Dihapus\t: ");
 	scanf("%s", idSupplier);
