@@ -132,8 +132,6 @@ int main() {
 		goto menu;
 	}
 
-	menuUtama();
-
 	return 0;
 }
 
@@ -146,31 +144,69 @@ void header() {
 void login() {
 	system("CLS");
 	header();
-	int key = 0;
-
+	int user = 0;
+	int pass = 0;
+	char temp[] = "";
 	FILE* dataAdmin;
-	dataAdmin = fopen("data admin.txt", "a+");
 
 	printf("Silahkan Login!\n");
 	printf("=================================================================================================\n");
-	login:
-	printf("\tUsername\t: ");
+	
+	loginUsername:
+	printf("\tNama\t\t: ");
 	scanf("%s", username);
+	loginPassword:
 	printf("\tPassword\t: ");
 	scanf("%s", password);
 
-	while (fscanf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF) {
-		if ((strcmp(username, tambah.username) == 0) && (strcmp(password, tambah.password) == 0)) {
-			printf("\tAnda Berhasil Login!\n");
-			key = 1;
-			break;
+	if (pass == 0 && user == 1){
+		if (strcmp(password, temp) == 0){
+			menuUtama();
+		} else {
+			goto loginPassword;
 		}
 	}
-	if (key != 1) {
-		printf("\tUsername atau Password Anda Salah!\n");
-		key = 1;
-		goto login;
+
+	dataAdmin = fopen("data admin.txt", "a+");
+	while (fscanf(dataAdmin, "%s\n%s\n%s\n%s\n", tambah.kodeAdmin, tambah.nama, tambah.username, tambah.password) != EOF) {
+		user = 0;
+		pass = 0;
+		if (strcmp(username, tambah.username) == 0){
+			user = 1;
+			if (strcmp(password, tambah.password) == 0){
+				pass = 1;
+				menuUtama();
+				break;
+			} else {
+				pass = 0;
+				strcat(temp, tambah.password);
+				break;
+			}
+		} else {
+			if (strcmp(password, tambah.password) == 0){
+				pass = 2;
+				if (user == 1 && pass == 2){
+					menuUtama();
+				}
+				fclose(dataAdmin);
+				printf("Username atau Pasword Anda Salah!\n");
+				goto loginUsername;
+				break;
+			} else {
+				pass = 0;
+				break;
+			}
+			
+		}
 	}
+	if (pass == 0 && user == 1){
+		printf("Password Anda Salah!\n");
+		goto loginPassword;
+	} else if (user == 0 && pass == 0){
+		printf("Username dan Pasword Anda Salah!\n");
+		goto loginUsername;
+	}
+
 	fclose(dataAdmin);
 }
 
