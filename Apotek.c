@@ -57,7 +57,8 @@ typedef struct {
 Admin tambah;
 Obat tambahObat;
 Obat editObat;
-
+Supplier tambahSupplier;
+Supplier editSupplier;
 void header();
 
 void login();
@@ -111,7 +112,7 @@ int main() {
 
 	system("COLOR C");
 	header();
-	
+
 	menu:
 	printf("\tHarap Login Terlebih Dahulu!\n");
 	printf("\t1. Sudah Punya Akun\n");
@@ -176,7 +177,7 @@ void login() {
 void signin() {
 	system("CLS");
 	header();
-	
+
 	FILE* dataAdmin;
 	dataAdmin = fopen("data admin.txt", "a+");
 
@@ -243,12 +244,12 @@ void menuUtama() {
 void manajemenData() {
 	system("CLS");
 	header();
-	
+
 	int menuManajemen;
 
 	printf("%s\t\t Manajemen Data\n", username);
 	printf("=================================================================================================\n");
-	
+
 	menuManajemen:
 	printf("\t1. Kelola Data Obat\n");
 	printf("\t2. Kelola Data Supplier\n");
@@ -324,7 +325,7 @@ void menambahkanDataObat() {
 	printf("\tHarga\t\t: ");
 	scanf("%d", &tambahObat.harga);
 	printf("\tTanggal Produksi (DDMMYYYY)\t: ");
-	
+
 	scanf("%d", &tambahObat.tanggalProduksi);
 	printf("\tTanggal Kadaluarsa (DDMMYYYY)\t: ");
 	scanf("%d", &tambahObat.tanggalKadaluarsa);
@@ -491,24 +492,125 @@ void kelolaDataSupplier() {
 }
 
 void menambahkanDataSupplier() {
+    FILE* dataSupplier;
+	dataSupplier = fopen("data supplier.txt", "a+");
+
 	printf("%s\t\t Menambahkan Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("\tID Supplier\t\t: ");
+	scanf("%s", tambahSupplier.idSupplier);
+	printf("\tNama Supplier\t\t: ");
+	scanf("%s", tambahSupplier.namaSupplier);
+	printf("\tNomor HP Supplier\t\t: ");
+	scanf("%d", &tambahSupplier.nomorHpSupplier);
+	printf("\tKota Supplier\t\t: ");
+	scanf("%s", tambahSupplier.kotaSupplier);
 
+	fprintf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+
+	fclose(dataSupplier);
 }
+
 void menampilkanDataSupplier() {
+    FILE* dataSupplier;
+	dataSupplier = fopen("data supplier.txt", "a+");
+
 	printf("%s\t\t Menampilkan Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("ID Supplier\t| Nama Supplier\t| Nomor HP Supplier | Kota Supplier\n");
+	printf("-------------------------------------------------------------------------------------------------\n");
 
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		printf("%s\t| %s\t| %d\t  | %s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+	}
+
+	fclose(dataSupplier);
 }
+
 void mengeditDataSupplier() {
+    FILE* dataSupplier, * dataSupplierBaru;
+	char idSupplier[50];
+	int found = 0;
+
+	dataSupplier = fopen("data supplier.txt", "r");
+	dataSupplierBaru = fopen("data supplier temp.txt", "w");
+
 	printf("%s\t\t Mengedit Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("\tMasukkan ID Supplier yang Akan Diedit\t: ");
+	scanf("%s", idSupplier);
 
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		if (strcmp(tambahSupplier.idSupplier, idSupplier) == 0) {
+			found = 1;
+			printf("\tID Supplier\t\t\t: %s\n", tambahSupplier.idSupplier);
+			printf("\tNama Supplier\t\t: %s\n", tambahSupplier.namaSupplier);
+			printf("\tNomor HP Supplier\t\t: %d\n", tambahSupplier.nomorHpSupplier);
+			printf("\tKota Supplier\t\t: %s\n", tambahSupplier.kotaSupplier);
+
+			printf("\tMasukkan Data Baru:\n");
+			printf("\tNama Supplier\t\t: ");
+			scanf("%s", editSupplier.namaSupplier);
+			printf("\tNomor HP Supplier\t\t: ");
+			scanf("%d", &editSupplier.nomorHpSupplier);
+			printf("\tKota Supplier\t\t: ");
+			scanf("%s", editSupplier.kotaSupplier);
+
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, editSupplier.namaSupplier, editSupplier.nomorHpSupplier, editSupplier.kotaSupplier);
+		}
+		else {
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+		}
+	}
+
+	fclose(dataSupplier);
+	fclose(dataSupplierBaru);
+
+	if (found) {
+		remove("data supplier.txt");
+		rename("data supplier temp.txt", "data supplier.txt");
+		printf("\tData Supplier Berhasil Diedit!\n");
+	}
+	else {
+		remove("data supplier temp.txt");
+		printf("\tData Supplier Tidak Ditemukan!\n");
+	}
 }
+
 void menghapusDataSupplier() {
+    FILE* dataSupplier, * dataSupplierBaru;
+	char idSupplier[50];
+	int found = 0;
+
+	dataSupplier = fopen("data supplier.txt", "r");
+	dataSupplierBaru = fopen("data supplier temp.txt", "w");
+
 	printf("%s\t\t Menghapus Data Supplier\n", username);
 	printf("=================================================================================================\n");
+	printf("\tMasukkan ID Supplier yang Akan Dihapus\t: ");
+	scanf("%s", idSupplier);
 
+	while (fscanf(dataSupplier, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, &tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier) != EOF) {
+		if (strcmp(tambahSupplier.idSupplier, idSupplier) == 0) {
+			found = 1;
+			printf("\tData Supplier dengan ID %s Berhasil Dihapus!\n", tambahSupplier.idSupplier);
+		}
+		else {
+			fprintf(dataSupplierBaru, "%s\n%s\n%d\n%s\n", tambahSupplier.idSupplier, tambahSupplier.namaSupplier, tambahSupplier.nomorHpSupplier, tambahSupplier.kotaSupplier);
+		}
+	}
+
+	fclose(dataSupplier);
+	fclose(dataSupplierBaru);
+
+	if (found) {
+		remove("data supplier.txt");
+		rename("data supplier temp.txt", "data supplier.txt");
+	}
+	else {
+		remove("data supplier temp.txt");
+		printf("\tData Supplier Tidak Ditemukan!\n");
+	}
 }
 
 void kelolaDataCustomer() {
@@ -573,7 +675,7 @@ void transaksiPenjualan() {
 
 	printf("%s\t \tTransaksi Penjualan\n", username);
 	printf("=================================================================================================\n");
-	
+
 	menuPenjualan:
 	printf("\t1. Buat Transaksi Penjualan\n");
 	printf("\t2. Lihat Transaksi Penjualan\n");
